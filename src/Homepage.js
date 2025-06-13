@@ -15,9 +15,7 @@ import {
   Avatar,
   Divider,
   Badge,
-  keyframes,
-  Circle,
-  Tooltip
+  Circle
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -45,6 +43,7 @@ import {
 } from 'react-icons/si';
 import ProjectTiles from './components/projectTiles';
 import { trackResumeDownload, trackButtonClick } from './utils/analytics';
+import { keyframes } from '@emotion/react';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);

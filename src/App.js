@@ -19,7 +19,7 @@ import Projects from './Projects';
 import About from './About';
 import Contact from './Contact';
 import './index.css';
-import { trackPageView, trackExternalLinkClick } from './utils/analytics';
+import { trackButtonClick } from './utils/analytics';
 
 function Navigation() {
   const location = useLocation();
@@ -125,7 +125,7 @@ function Navigation() {
                 variant="ghost"
                 _hover={{ transform: 'translateY(-1px)' }}
                 transition="all 0.2s"
-                onClick={() => trackExternalLinkClick('github', 'https://github.com/anyangateny1')}
+                onClick={() => trackButtonClick('github', 'https://github.com/anyangateny1')}
               />
               <IconButton
                 as="a"
@@ -138,7 +138,7 @@ function Navigation() {
                 variant="ghost"
                 _hover={{ transform: 'translateY(-1px)' }}
                 transition="all 0.2s"
-                onClick={() => trackExternalLinkClick('linkedin', 'https://www.linkedin.com/in/anyangateny1/')}
+                onClick={() => trackButtonClick('linkedin', 'https://www.linkedin.com/in/anyangateny1/')}
               />
               <IconButton
                 aria-label="Toggle color mode"

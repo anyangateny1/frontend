@@ -32,8 +32,6 @@ import {
   FaLinkedin,
   FaGithub,
   FaPaperPlane,
-  FaPhone,
-  FaMapMarkerAlt,
   FaUser
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';

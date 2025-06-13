@@ -23,28 +23,6 @@ import { Icon } from '@chakra-ui/react';
 
 const MotionCard = motion(Card);
 
-const parseTags = ({ tags }) => {
-  return (
-    <HStack spacing={2} flexWrap="wrap" justify="center">
-      {tags.map((tag, index) => 
-        tag ? (
-          <Badge 
-            key={index} 
-            colorScheme="blue" 
-            variant="subtle"
-            fontSize="xs" 
-            px={2} 
-            py={1}
-            borderRadius="md"
-          >
-            {tag.toUpperCase()}
-          </Badge>
-        ) : null
-      )}
-    </HStack>
-  );
-};
-
 const ProjectTiles = () => {
   const { projects, error, loading } = useProjects();
   const bgColor = useColorModeValue('white', 'gray.800');

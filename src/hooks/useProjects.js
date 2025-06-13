@@ -15,7 +15,6 @@ const useProjects = () => {
       return await axios({
         url,
         ...options,
-        withCredentials: true,
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',

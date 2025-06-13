@@ -24,6 +24,28 @@ const ProjectImage = React.memo(({ imageUrl, size = 'medium', alt }) => {
   const loadAndCacheImage = useCallback(async () => {
     if (hasError) return;
 
+    // If the imageUrl is already a presigned URL, use it directly
+    if (imageUrl && (imageUrl.startsWith('https://') || imageUrl.startsWith('http://'))) {
+      // Pre-load the image to check if it's valid
+      return new Promise((resolve, reject) => {
+        const img = new window.Image();
+        img.onload = () => {
+          setDisplayUrl(imageUrl);
+          setIsLoading(false);
+          resolve();
+        };
+        img.onerror = () => {
+          console.error('Image load failed for URL:', imageUrl);
+          setHasError(true);
+          setDisplayUrl(PLACEHOLDER_IMAGE);
+          setIsLoading(false);
+          reject(new Error('Image load failed'));
+        };
+        img.src = imageUrl;
+      });
+    }
+
+    // For API endpoints that return presigned URLs
     const cacheKey = `${CACHE_KEY_PREFIX}${imageUrl}`;
     const cachedData = localStorage.getItem(cacheKey);
     
