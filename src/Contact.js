@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { keyframes } from '@emotion/react';
 import {
   Box,
   Container,
@@ -12,9 +13,6 @@ import {
   Card,
   CardBody,
   useColorModeValue,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   FormControl,
   FormLabel,
@@ -24,22 +22,66 @@ import {
   Link as ChakraLink,
   Circle,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
 import { 
-  FaEnvelope, 
-  FaHome, 
-  FaChevronRight, 
   FaLinkedin,
   FaGithub,
   FaPaperPlane,
-  FaUser
+  FaUser,
+  FaReact,
+  FaPython,
+  FaJava,
+  FaAws,
+  FaCloud
 } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { 
+  SiTypescript,
+  SiDocker,
+  SiCplusplus,
+  SiRust,
+  SiVuedotjs
+} from 'react-icons/si';
 import { trackContactFormSubmit, trackExternalLinkClick } from './utils/analytics';
 
-const MotionBox = motion(Box);
-const MotionVStack = motion(VStack);
-const MotionCard = motion(Card);
+const float = keyframes`
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+`;
+
+function FloatingElements() {
+  const elements = [
+    // Top area
+    { icon: FaReact, color: "blue.400", size: "32px", top: "8vh", left: "8%" },
+    { icon: SiCplusplus, color: "blue.600", size: "28px", top: "15vh", right: "10%" },
+    { icon: SiVuedotjs, color: "green.400", size: "26px", top: "5vh", left: "50%" },
+    // Middle area
+    { icon: FaJava, color: "red.500", size: "30px", top: "35vh", left: "5%" },
+    { icon: SiTypescript, color: "blue.500", size: "26px", top: "30vh", right: "8%" },
+    { icon: SiRust, color: "orange.600", size: "28px", top: "45vh", left: "85%" },
+    { icon: FaPython, color: "yellow.500", size: "30px", top: "55vh", left: "10%" },
+    // Lower area
+    { icon: FaAws, color: "orange.400", size: "32px", top: "65vh", right: "12%" },
+    { icon: SiDocker, color: "blue.400", size: "28px", top: "75vh", left: "70%" },
+    { icon: FaCloud, color: "blue.300", size: "30px", top: "85vh", left: "15%" }
+  ];
+
+  return (
+    <Box position="absolute" top={0} left={0} right={0} height="100vh" overflow="visible" zIndex={0} pointerEvents="none">
+      {elements.map((element, index) => (
+        <Box
+          key={index}
+          position="absolute"
+          top={element.top}
+          left={element.left}
+          right={element.right}
+          animation={`${float} ${4 + index * 0.3}s ease-in-out infinite`}
+          opacity={0.2}
+        >
+          <Icon as={element.icon} color={element.color} boxSize={element.size} />
+        </Box>
+      ))}
+    </Box>
+  );
+}
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -139,78 +181,12 @@ function Contact() {
   };
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
-      {/* Hero Section */}
-      <Box 
-        bgGradient={useColorModeValue(
-          'linear(to-br, blue.50, purple.50, pink.50)',
-          'linear(to-br, gray.900, purple.900, blue.900)'
-        )}
-        py={24}
-        position="relative"
-        overflow="hidden"
-        minH="50vh"
-        display="flex"
-        alignItems="center"
-      >
-        <Container maxW="container.xl">
-          <MotionVStack
-            spacing={10}
-            textAlign="center"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            {/* Breadcrumb */}
-            <Breadcrumb 
-              spacing="8px" 
-              separator={<Icon as={FaChevronRight} color="gray.500" />}
-              fontSize="md"
-            >
-              <BreadcrumbItem>
-                <BreadcrumbLink as={Link} to="/" color={subtitleColor}>
-                  <HStack spacing={2}>
-                    <Icon as={FaHome} />
-                    <Text>Home</Text>
-                  </HStack>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink color={textColor} fontWeight="bold">
-                  Contact
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-
-            {/* Badge */}
-            <Badge
-              colorScheme="green"
-              variant="subtle"
-              px={8}
-              py={4}
-              borderRadius="full"
-              fontSize="lg"
-              fontWeight="bold"
-              textTransform="uppercase"
-              letterSpacing="wide"
-            >
-              <Icon as={FaEnvelope} mr={2} />
-              Get In Touch
-            </Badge>
-          </MotionVStack>
-        </Container>
-      </Box>
-
-      {/* Main Content */}
-      <Box py={24}>
-        <Container maxW="container.xl">
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={16}>
+    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')} position="relative" overflow="hidden">
+      <FloatingElements />
+      <Container maxW="container.xl" pt={8} pb={16} position="relative" zIndex={1}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={16}>
             {/* Contact Form */}
-            <MotionBox
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
+            <Box>
               <Card bg={bgColor} border="1px solid" borderColor={borderColor} borderRadius="3xl" boxShadow="0 10px 30px rgba(0,0,0,0.1)">
                 <CardBody p={10}>
                   <VStack spacing={8} align="stretch">
@@ -307,11 +283,8 @@ function Contact() {
                           isLoading={isSubmitting}
                           loadingText="Sending..."
                           _hover={{
-                            bgGradient: "linear(to-r, green.600, teal.700)",
-                            transform: 'translateY(-2px)',
-                            boxShadow: '0 15px 35px rgba(72, 187, 120, 0.4)'
+                            bgGradient: "linear(to-r, green.600, teal.700)"
                           }}
-                          transition="all 0.3s"
                           borderRadius="xl"
                           fontSize="md"
                           fontWeight="semibold"
@@ -323,14 +296,10 @@ function Contact() {
                   </VStack>
                 </CardBody>
               </Card>
-            </MotionBox>
+            </Box>
 
             {/* Contact Information */}
-            <MotionBox
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            <Box>
               <VStack spacing={8} align="stretch">
                 <VStack spacing={6} textAlign="center">
                   <Badge
@@ -353,25 +322,14 @@ function Contact() {
                 </VStack>
 
                 <VStack spacing={6}>
-                  {contactMethods.map((method, index) => (
-                    <MotionCard
+                  {contactMethods.map((method) => (
+                    <Card
                       key={method.title}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                      whileHover={{ 
-                        y: -8,
-                        transition: { type: "spring", stiffness: 300 }
-                      }}
                       bg={bgColor}
                       border="1px solid"
                       borderColor={borderColor}
                       borderRadius="2xl"
                       overflow="hidden"
-                      _hover={{ 
-                        boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                        borderColor: method.color,
-                      }}
                       w="full"
                     >
                       <Box
@@ -405,14 +363,13 @@ function Contact() {
                           </HStack>
                         </ChakraLink>
                       </CardBody>
-                    </MotionCard>
+                    </Card>
                   ))}
                 </VStack>
               </VStack>
-            </MotionBox>
-          </SimpleGrid>
-        </Container>
-      </Box>
+            </Box>
+        </SimpleGrid>
+      </Container>
     </Box>
   );
 }

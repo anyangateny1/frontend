@@ -15,13 +15,10 @@ import {
   Alert,
   AlertIcon
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
 import useProjects from '../hooks/useProjects';
 import ProjectImage from './ProjectImage';
 import { FaCode } from 'react-icons/fa';
 import { Icon } from '@chakra-ui/react';
-
-const MotionCard = motion(Card);
 
 const ProjectTiles = () => {
   const { projects, error, loading } = useProjects();
@@ -72,23 +69,13 @@ const ProjectTiles = () => {
 
   return (
     <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-      {projects.map((project, index) => (
-        <MotionCard
+      {projects.map((project) => (
+        <Card
           key={project.id}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          viewport={{ once: true }}
           bg={bgColor}
           border="1px solid"
           borderColor={borderColor}
           borderRadius="3xl"
-          _hover={{ 
-            transform: 'translateY(-12px)', 
-            boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
-            borderColor: 'purple.300',
-            transition: 'all 0.3s'
-          }}
           overflow="hidden"
           h="full"
         >
@@ -170,7 +157,7 @@ const ProjectTiles = () => {
               </VStack>
             </VStack>
           </CardBody>
-        </MotionCard>
+        </Card>
       ))}
     </SimpleGrid>
   );
@@ -219,23 +206,13 @@ const SmallTiles = () => {
 
   return (
     <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={8}>
-      {projects.slice(0, 2).map((project, index) => (
-        <MotionCard
+      {projects.slice(0, 2).map((project) => (
+        <Card
           key={project.id}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          viewport={{ once: true }}
           bg={bgColor}
           border="1px solid"
           borderColor={borderColor}
           borderRadius="2xl"
-          _hover={{ 
-            transform: 'translateY(-8px)', 
-            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-            borderColor: 'purple.300',
-            transition: 'all 0.3s'
-          }}
           overflow="hidden"
           h="full"
         >
@@ -279,7 +256,7 @@ const SmallTiles = () => {
               </VStack>
             </VStack>
           </CardBody>
-        </MotionCard>
+        </Card>
       ))}
     </SimpleGrid>
   );

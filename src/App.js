@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
 import { 
   Box, 
@@ -16,10 +17,19 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { BsGithub, BsLinkedin } from 'react-icons/bs';
 import Homepage from './Homepage';
 import Projects from './Projects';
-import About from './About';
 import Contact from './Contact';
 import './index.css';
 import { trackButtonClick } from './utils/analytics';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function Navigation() {
   const location = useLocation();
@@ -50,8 +60,6 @@ function Navigation() {
               fontSize="xl" 
               fontWeight="bold" 
               color={textColor}
-              _hover={{ color: 'blue.500' }}
-              transition="color 0.2s"
             >
               Anyang Ateny
             </Text>
@@ -79,22 +87,8 @@ function Navigation() {
                   colorScheme={isActive('/projects') ? 'blue' : 'gray'}
                   size="sm"
                   fontWeight="medium"
-                  _hover={{ transform: 'translateY(-1px)' }}
-                  transition="all 0.2s"
                 >
                   Projects
-                </Button>
-              </Link>
-              <Link to="/about" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant={isActive('/about') ? 'solid' : 'ghost'}
-                  colorScheme={isActive('/about') ? 'blue' : 'gray'}
-                  size="sm"
-                  fontWeight="medium"
-                  _hover={{ transform: 'translateY(-1px)' }}
-                  transition="all 0.2s"
-                >
-                  About
                 </Button>
               </Link>
               <Link to="/contact" style={{ textDecoration: 'none' }}>
@@ -103,8 +97,6 @@ function Navigation() {
                   colorScheme={isActive('/contact') ? 'blue' : 'gray'}
                   size="sm"
                   fontWeight="medium"
-                  _hover={{ transform: 'translateY(-1px)' }}
-                  transition="all 0.2s"
                 >
                   Contact
                 </Button>
@@ -123,8 +115,6 @@ function Navigation() {
                 icon={<BsGithub />}
                 size="sm"
                 variant="ghost"
-                _hover={{ transform: 'translateY(-1px)' }}
-                transition="all 0.2s"
                 onClick={() => trackButtonClick('github', 'https://github.com/anyangateny1')}
               />
               <IconButton
@@ -136,8 +126,6 @@ function Navigation() {
                 icon={<BsLinkedin />}
                 size="sm"
                 variant="ghost"
-                _hover={{ transform: 'translateY(-1px)' }}
-                transition="all 0.2s"
                 onClick={() => trackButtonClick('linkedin', 'https://www.linkedin.com/in/anyangateny1/')}
               />
               <IconButton
@@ -146,8 +134,6 @@ function Navigation() {
                 onClick={toggleColorMode}
                 size="sm"
                 variant="ghost"
-                _hover={{ transform: 'translateY(-1px)' }}
-                transition="all 0.2s"
               />
             </HStack>
           </HStack>
@@ -162,6 +148,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Box 
         minHeight="100vh" 
         bg={bgColor}
@@ -174,7 +161,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
         </Box>

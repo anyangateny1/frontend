@@ -1,4 +1,5 @@
 import React from 'react';
+import { keyframes } from '@emotion/react';
 import {
   Box,
   Container,
@@ -8,119 +9,111 @@ import {
   Badge,
   Icon,
   useColorModeValue,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  HStack,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { FaCode, FaHome, FaChevronRight } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { 
+  FaCode,
+  FaReact,
+  FaPython,
+  FaJava,
+  FaAws,
+  FaGitAlt,
+  FaCloud
+} from 'react-icons/fa';
+import { 
+  SiTypescript,
+  SiDocker,
+  SiCplusplus,
+  SiRust,
+  SiSpringboot,
+  SiVuedotjs
+} from 'react-icons/si';
 import ProjectTiles from './components/projectTiles';
 
-const MotionBox = motion(Box);
-const MotionVStack = motion(VStack);
+const float = keyframes`
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+`;
+
+function FloatingElements() {
+  const elements = [
+    // Top area
+    { icon: FaReact, color: "blue.400", size: "34px", top: "5vh", left: "10%" },
+    { icon: SiCplusplus, color: "blue.600", size: "30px", top: "12vh", right: "12%" },
+    { icon: SiVuedotjs, color: "green.400", size: "26px", top: "8vh", left: "55%" },
+    // Middle area
+    { icon: FaJava, color: "red.500", size: "32px", top: "35vh", left: "8%" },
+    { icon: SiTypescript, color: "blue.500", size: "28px", top: "40vh", right: "10%" },
+    { icon: SiRust, color: "orange.600", size: "30px", top: "50vh", left: "70%" },
+    { icon: FaPython, color: "yellow.500", size: "32px", top: "60vh", left: "15%" },
+    // Lower area
+    { icon: FaAws, color: "orange.400", size: "34px", top: "70vh", right: "5%" },
+    { icon: SiSpringboot, color: "green.500", size: "28px", top: "90vh", left: "12%" },
+    { icon: FaCloud, color: "blue.300", size: "32px", top: "95vh", right: "20%" }
+  ];
+
+  return (
+    <Box position="absolute" top={0} left={0} right={0} height="120vh" overflow="visible" zIndex={0} pointerEvents="none">
+      {elements.map((element, index) => (
+        <Box
+          key={index}
+          position="absolute"
+          top={element.top}
+          left={element.left}
+          right={element.right}
+          animation={`${float} ${4 + index * 0.3}s ease-in-out infinite`}
+          opacity={0.2}
+        >
+          <Icon as={element.icon} color={element.color} boxSize={element.size} />
+        </Box>
+      ))}
+    </Box>
+  );
+}
 
 function Projects() {
   const textColor = useColorModeValue('gray.800', 'white');
   const subtitleColor = useColorModeValue('gray.600', 'gray.300');
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
-      {/* Hero Section */}
-      <Box 
-        bgGradient={useColorModeValue(
-          'linear(to-br, purple.50, blue.50, pink.50)',
-          'linear(to-br, gray.900, purple.900, blue.900)'
-        )}
-        py={24}
-        position="relative"
-        overflow="hidden"
-        minH="50vh"
-        display="flex"
-        alignItems="center"
-      >
-        <Container maxW="container.xl">
-          <MotionVStack
-            spacing={10}
-            textAlign="center"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')} position="relative" overflow="hidden">
+      <FloatingElements />
+      <Container maxW="container.xl" pt={8} pb={16} position="relative" zIndex={1}>
+        {/* Header */}
+        <VStack spacing={4} textAlign="center" mb={10}>
+          <Badge
+            colorScheme="purple"
+            variant="subtle"
+            px={6}
+            py={2}
+            borderRadius="full"
+            fontSize="sm"
+            fontWeight="bold"
+            textTransform="uppercase"
+            letterSpacing="wide"
           >
-            {/* Breadcrumb */}
-            <Breadcrumb 
-              spacing="8px" 
-              separator={<Icon as={FaChevronRight} color="gray.500" />}
-              fontSize="md"
-            >
-              <BreadcrumbItem>
-                <BreadcrumbLink as={Link} to="/" color={subtitleColor}>
-                  <HStack spacing={2}>
-                    <Icon as={FaHome} />
-                    <Text>Home</Text>
-                  </HStack>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink color={textColor} fontWeight="bold">
-                  Projects
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-
-            {/* Badge */}
-            <Badge
-              colorScheme="purple"
-              variant="subtle"
-              px={8}
-              py={4}
-              borderRadius="full"
-              fontSize="lg"
-              fontWeight="bold"
-              textTransform="uppercase"
-              letterSpacing="wide"
-            >
-              <Icon as={FaCode} mr={2} />
-              My Projects
-            </Badge>
-
-            {/* Title */}
-            <Heading 
-              as="h1" 
-              size="3xl" 
-              color={textColor} 
-              fontWeight="extrabold"
-              letterSpacing="tight"
-            >
-              Featured Work
-            </Heading>
-
-            {/* Subtitle */}
-            <Text 
-              color={subtitleColor} 
-              fontSize="xl" 
-              maxW="3xl"
-              fontWeight="medium"
-            >
-              A collection of projects that showcase my skills and passion for development
-            </Text>
-          </MotionVStack>
-        </Container>
-      </Box>
-
-      {/* Projects Grid */}
-      <Box py={24}>
-        <Container maxW="container.xl">
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            <Icon as={FaCode} mr={2} />
+            Portfolio
+          </Badge>
+          <Heading 
+            as="h1" 
+            size="2xl" 
+            color={textColor} 
+            fontWeight="extrabold"
           >
-            <ProjectTiles />
-          </MotionBox>
-        </Container>
-      </Box>
+            My Projects
+          </Heading>
+          <Text 
+            color={subtitleColor} 
+            fontSize="lg" 
+            maxW="2xl"
+          >
+            A collection of projects showcasing my skills and passion for development
+          </Text>
+        </VStack>
+
+        {/* Projects Grid */}
+        <ProjectTiles />
+      </Container>
     </Box>
   );
 }
