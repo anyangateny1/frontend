@@ -29,12 +29,18 @@ import {
   FaAws, 
   FaGitAlt,
   FaExternalLinkAlt,
+  FaPalette,
+  FaProjectDiagram,
+  FaTools,
+  FaBug,
+  FaWrench,
   FaRocket,
   FaCode,
   FaLightbulb,
   FaStar
 } from 'react-icons/fa';
 import { 
+  SiCmake,
   SiJavascript, 
   SiTypescript, 
   SiDocker,
@@ -48,42 +54,42 @@ import { trackResumeDownload, trackButtonClick } from './utils/analytics';
 
 const skillCategories = [
   {
-    title: "Frontend",
-    icon: FaCode,
+    title: "Systems",
+    icon: FaRocket,
     gradient: "linear(to-br, blue.400, purple.500)",
     skills: [
-      { name: "Vue.js", icon: SiVuedotjs, color: "green.500" },
-      { name: "TypeScript", icon: SiTypescript, color: "blue.600" },
-      { name: "React", icon: FaReact, color: "blue.400" }
+      { name: "C++", icon: SiCplusplus, color: "blue.600" },
+      { name: "Python", icon: FaPython, color: "blue.500" },
+      { name: "Multithreading", icon: FaProjectDiagram, color: "purple.500" }
     ]
   },
   {
-    title: "Backend",
-    icon: FaRocket,
+   title: "Tooling",
+    icon: FaTools,
     gradient: "linear(to-br, green.400, teal.500)",
     skills: [
-      { name: "Python", icon: FaPython, color: "blue.500" },
-      { name: "Java", icon: FaJava, color: "red.500" },
-      { name: "Spring Boot", icon: SiSpringboot, color: "green.600" }
+      { name: "CMake", icon: SiCmake, color: "blue.500" },
+      { name: "GDB", icon: FaBug, color: "green.500" },
+      { name: "Git", icon: FaGitAlt, color: "red.600" }
     ]
   },
   {
-    title: "Systems",
-    icon: FaLightbulb,
-    gradient: "linear(to-br, purple.400, pink.500)",
-    skills: [
-      { name: "C++", icon: SiCplusplus, color: "blue.600" },
-      { name: "Python", icon: FaPython, color: "blue.500" }
-    ]
-  },
-  {
-    title: "DevOps & Cloud",
+    title: "Cloud",
     icon: FaCloud,
     gradient: "linear(to-br, orange.400, red.500)",
     skills: [
       { name: "AWS", icon: FaAws, color: "orange.400" },
       { name: "Docker", icon: SiDocker, color: "blue.500" },
-      { name: "Git", icon: FaGitAlt, color: "red.500" }
+    ]
+  },
+  {
+    title: "Frontend",
+    icon: FaPalette,
+    gradient: "linear(to-br, purple.400, pink.500)",
+    skills: [
+      { name: "Vue.js", icon: SiVuedotjs, color: "green.500" },
+      { name: "TypeScript", icon: SiTypescript, color: "blue.600" },
+      { name: "React", icon: FaReact, color: "blue.400" }
     ]
   }
 ];
