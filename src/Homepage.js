@@ -367,12 +367,12 @@ function ProjectsSection() {
               Featured Projects
             </Heading>
             <Text color={subtitleColor} fontSize="xl" maxW="2xl" fontWeight="medium">
-              A showcase of my personal projects
+              A showcase of some of my personal projects
             </Text>
           </VStack>
 
           <Box w="full">
-            <ProjectTiles />
+            <ProjectTiles limit={3} />
           </Box>
 
           <Button
