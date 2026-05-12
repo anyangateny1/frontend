@@ -1,24 +1,24 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { 
-  SimpleGrid, 
-  Box, 
-  Text, 
-  Heading, 
-  Badge, 
-  Card, 
-  CardBody, 
-  VStack, 
+import {
+  Alert,
+  AlertIcon,
+  Badge,
+  Box,
+  Card,
+  CardBody,
+  Heading,
   HStack,
-  useColorModeValue,
+  Icon,
+  SimpleGrid,
   Skeleton,
   SkeletonText,
-  Alert,
-  AlertIcon
-} from '@chakra-ui/react';
-import useProjects from '../hooks/useProjects';
-import ProjectImage from './ProjectImage';
-import { FaCode } from 'react-icons/fa';
-import { Icon } from '@chakra-ui/react';
+  Text,
+  useColorModeValue,
+  VStack,
+} from "@chakra-ui/react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { FaCode } from "react-icons/fa";
+import useProjects from "../utils/useProjects";
+import ProjectImage from "./ProjectImage";
 
 // Marquee component for tags that overflow
 const TagMarquee = ({ tags }) => {
@@ -39,24 +39,24 @@ const TagMarquee = ({ tags }) => {
 
   useEffect(() => {
     checkOverflow();
-    
+
     const resizeObserver = new ResizeObserver(checkOverflow);
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
-    
+
     return () => resizeObserver.disconnect();
   }, [checkOverflow, tags]);
 
-  const renderBadges = () => 
-    tags.map((tag, tagIndex) => 
+  const renderBadges = () =>
+    tags.map((tag, tagIndex) =>
       tag ? (
-        <Badge 
-          key={tagIndex} 
+        <Badge
+          key={tagIndex}
           colorScheme="blue"
           variant="subtle"
-          fontSize="xs" 
-          px={3} 
+          fontSize="xs"
+          px={3}
           py={1}
           borderRadius="full"
           fontWeight="semibold"
@@ -67,7 +67,7 @@ const TagMarquee = ({ tags }) => {
         >
           {tag}
         </Badge>
-      ) : null
+      ) : null,
     );
 
   if (!shouldAnimate) {
@@ -84,15 +84,17 @@ const TagMarquee = ({ tags }) => {
   const duration = Math.max(8, contentWidth / 30);
 
   return (
-    <Box 
-      ref={containerRef} 
-      overflow="hidden" 
-      width="100%" 
+    <Box
+      ref={containerRef}
+      overflow="hidden"
+      width="100%"
       position="relative"
       className="tag-marquee-container"
       sx={{
-        maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-        WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+        maskImage:
+          "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
       }}
     >
       <HStack
@@ -101,14 +103,14 @@ const TagMarquee = ({ tags }) => {
         flexWrap="nowrap"
         className="tag-marquee"
         sx={{
-          display: 'inline-flex',
+          display: "inline-flex",
           animation: `marquee ${duration}s linear infinite`,
-          '&:hover': {
-            animationPlayState: 'paused',
+          "&:hover": {
+            animationPlayState: "paused",
           },
-          '@keyframes marquee': {
-            '0%': { transform: 'translateX(0)' },
-            '100%': { transform: `translateX(-50%)` },
+          "@keyframes marquee": {
+            "0%": { transform: "translateX(0)" },
+            "100%": { transform: `translateX(-50%)` },
           },
         }}
       >
@@ -123,16 +125,25 @@ const TagMarquee = ({ tags }) => {
 const ProjectTiles = ({ limit }) => {
   const { projects, error, loading } = useProjects();
   const displayProjects = limit ? projects.slice(0, limit) : projects;
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const textColor = useColorModeValue('gray.800', 'white');
-  const subtitleColor = useColorModeValue('gray.600', 'gray.400');
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const textColor = useColorModeValue("gray.800", "white");
+  const subtitleColor = useColorModeValue("gray.600", "gray.400");
 
   if (loading) {
     return (
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
         {[1, 2, 3].map((index) => (
-          <Card key={index} bg={bgColor} border="1px solid" borderColor={borderColor} borderRadius="2xl" h="full" boxShadow="sm" overflow="hidden">
+          <Card
+            key={index}
+            bg={bgColor}
+            border="1px solid"
+            borderColor={borderColor}
+            borderRadius="2xl"
+            h="full"
+            boxShadow="sm"
+            overflow="hidden"
+          >
             <Box h="3px" bg="blue.200" />
             <CardBody p={0}>
               <VStack spacing={0} align="stretch" h="full">
@@ -180,8 +191,8 @@ const ProjectTiles = ({ limit }) => {
           boxShadow="sm"
           transition="all 0.2s ease"
           _hover={{
-            transform: 'translateY(-4px)',
-            boxShadow: 'lg',
+            transform: "translateY(-4px)",
+            boxShadow: "lg",
           }}
           position="relative"
         >
@@ -214,12 +225,12 @@ const ProjectTiles = ({ limit }) => {
                   <Icon as={FaCode} color="white" boxSize={3} />
                 </Box>
               </Box>
-              
+
               <VStack spacing={5} p={6} align="stretch" flex={1}>
                 <VStack spacing={2} align="stretch">
-                  <Heading 
-                    as="h3" 
-                    size="md" 
+                  <Heading
+                    as="h3"
+                    size="md"
                     color={textColor}
                     fontWeight="bold"
                     noOfLines={1}
@@ -227,17 +238,13 @@ const ProjectTiles = ({ limit }) => {
                   >
                     {project.projectName}
                   </Heading>
-                  <Text 
-                    fontSize="sm" 
-                    color="blue.500"
-                    fontWeight="medium"
-                  >
+                  <Text fontSize="sm" color="blue.500" fontWeight="medium">
                     {project.projectDate || project.date}
                   </Text>
                 </VStack>
-                
-                <Text 
-                  color={subtitleColor} 
+
+                <Text
+                  color={subtitleColor}
                   fontSize="sm"
                   lineHeight="tall"
                   noOfLines={3}
@@ -245,7 +252,7 @@ const ProjectTiles = ({ limit }) => {
                 >
                   {project.desc || project.description}
                 </Text>
-                
+
                 {project.tags && project.tags.length > 0 && (
                   <Box pt={2}>
                     <TagMarquee tags={project.tags} />
@@ -262,9 +269,9 @@ const ProjectTiles = ({ limit }) => {
 
 const SmallTiles = () => {
   const { projects, error, loading, fetchProjects } = useProjects();
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const textColor = useColorModeValue('gray.800', 'white');
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const textColor = useColorModeValue("gray.800", "white");
 
   useEffect(() => {
     fetchProjects();
@@ -274,7 +281,14 @@ const SmallTiles = () => {
     return (
       <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={8}>
         {[1, 2].map((index) => (
-          <Card key={index} bg={bgColor} border="1px solid" borderColor={borderColor} borderRadius="2xl" h="full">
+          <Card
+            key={index}
+            bg={bgColor}
+            border="1px solid"
+            borderColor={borderColor}
+            borderRadius="2xl"
+            h="full"
+          >
             <CardBody p={0}>
               <VStack spacing={0} align="stretch" h="full">
                 <Skeleton height="180px" borderTopRadius="2xl" />
@@ -333,11 +347,11 @@ const SmallTiles = () => {
                   <Icon as={FaCode} color="purple.500" boxSize={4} />
                 </Box>
               </Box>
-              
+
               <VStack spacing={3} p={6} align="stretch" flex={1}>
-                <Heading 
-                  as="h4" 
-                  size="md" 
+                <Heading
+                  as="h4"
+                  size="md"
                   color={textColor}
                   fontWeight="bold"
                   noOfLines={1}
@@ -345,11 +359,7 @@ const SmallTiles = () => {
                 >
                   {project.projectName}
                 </Heading>
-                <Text 
-                  fontSize="sm" 
-                  color="purple.500"
-                  fontWeight="semibold"
-                >
+                <Text fontSize="sm" color="purple.500" fontWeight="semibold">
                   {project.projectDate || project.date}
                 </Text>
               </VStack>
