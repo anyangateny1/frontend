@@ -39,19 +39,6 @@ code {
   background: #a8a8a8;
 }
 
-/* Focus styles for accessibility */
-*:focus {
-  outline: 2px solid #3182ce;
-  outline-offset: 2px;
-}
-
-/* Form styling improvements */
-form {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
 /* Link styling */
 a {
   color: inherit;

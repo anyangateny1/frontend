@@ -31,9 +31,9 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import Contact from "./contact/Contact";
-import Homepage from "./homepage/Homepage";
-import Projects from "./projects/Projects";
+import Contact from "./pages/contact/Contact";
+import Homepage from "./pages/homepage/Homepage";
+import Projects from "./pages/projects/Projects";
 import "./index.css";
 
 function ScrollToTop() {

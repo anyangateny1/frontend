@@ -20,128 +20,10 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { keyframes } from "@emotion/react";
-import React, { useState } from "react";
-import {
-  FaAws,
-  FaCloud,
-  FaGithub,
-  FaJava,
-  FaLinkedin,
-  FaPaperPlane,
-  FaPython,
-  FaReact,
-  FaUser,
-} from "react-icons/fa";
-import {
-  SiCplusplus,
-  SiDocker,
-  SiRust,
-  SiTypescript,
-  SiVuedotjs,
-} from "react-icons/si";
-
-const float = keyframes`
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(5deg); }
-`;
-
-function FloatingElements() {
-  const elements = [
-    // Top area
-    { icon: FaReact, color: "blue.400", size: "32px", top: "8vh", left: "8%" },
-    {
-      icon: SiCplusplus,
-      color: "blue.600",
-      size: "28px",
-      top: "15vh",
-      right: "10%",
-    },
-    {
-      icon: SiVuedotjs,
-      color: "green.400",
-      size: "26px",
-      top: "5vh",
-      left: "50%",
-    },
-    // Middle area
-    { icon: FaJava, color: "red.500", size: "30px", top: "35vh", left: "5%" },
-    {
-      icon: SiTypescript,
-      color: "blue.500",
-      size: "26px",
-      top: "30vh",
-      right: "8%",
-    },
-    {
-      icon: SiRust,
-      color: "orange.600",
-      size: "28px",
-      top: "45vh",
-      left: "85%",
-    },
-    {
-      icon: FaPython,
-      color: "yellow.500",
-      size: "30px",
-      top: "55vh",
-      left: "10%",
-    },
-    // Lower area
-    {
-      icon: FaAws,
-      color: "orange.400",
-      size: "32px",
-      top: "65vh",
-      right: "12%",
-    },
-    {
-      icon: SiDocker,
-      color: "blue.400",
-      size: "28px",
-      top: "75vh",
-      left: "70%",
-    },
-    {
-      icon: FaCloud,
-      color: "blue.300",
-      size: "30px",
-      top: "85vh",
-      left: "15%",
-    },
-  ];
-
-  return (
-    <Box
-      position="absolute"
-      top={0}
-      left={0}
-      right={0}
-      height="100vh"
-      overflow="visible"
-      zIndex={0}
-      pointerEvents="none"
-    >
-      {elements.map((element, index) => (
-        <Box
-          key={index}
-          position="absolute"
-          top={element.top}
-          left={element.left}
-          right={element.right}
-          animation={`${float} ${4 + index * 0.3}s ease-in-out infinite`}
-          opacity={0.2}
-        >
-          <Icon
-            as={element.icon}
-            color={element.color}
-            boxSize={element.size}
-          />
-        </Box>
-      ))}
-    </Box>
-  );
-}
+import { useState } from "react";
+import { FaGithub, FaLinkedin, FaPaperPlane, FaUser } from "react-icons/fa";
+import FloatingBackground from "../../components/FloatingBackground";
+import config from "../../config";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -192,7 +74,7 @@ function Contact() {
 
     try {
       const response = await fetch(
-        "https://yhrh5asyof.execute-api.ap-southeast-2.amazonaws.com/prod/api/contact",
+        `${config.apiBaseUrl}${config.endpoints.contact}`,
         {
           method: "POST",
           headers: {
@@ -212,7 +94,6 @@ function Contact() {
         });
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
-        // Check if it's an email verification error
         const errorData = await response.json().catch(() => ({}));
         if (errorData.message && errorData.message.includes("not verified")) {
           toast({
@@ -247,7 +128,7 @@ function Contact() {
       position="relative"
       overflow="hidden"
     >
-      <FloatingElements />
+      <FloatingBackground variant="contact" />
       <Container
         maxW="container.xl"
         pt={8}

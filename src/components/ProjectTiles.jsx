@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaCode } from "react-icons/fa";
-import useProjects from "../utils/useProjects";
+import useProjects from "../hooks/useProjects";
 import ProjectImage from "./ProjectImage";
 
 // Marquee component for tags that overflow
@@ -267,109 +267,4 @@ const ProjectTiles = ({ limit }) => {
   );
 };
 
-const SmallTiles = () => {
-  const { projects, error, loading, fetchProjects } = useProjects();
-  const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
-  const textColor = useColorModeValue("gray.800", "white");
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
-
-  if (loading) {
-    return (
-      <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={8}>
-        {[1, 2].map((index) => (
-          <Card
-            key={index}
-            bg={bgColor}
-            border="1px solid"
-            borderColor={borderColor}
-            borderRadius="2xl"
-            h="full"
-          >
-            <CardBody p={0}>
-              <VStack spacing={0} align="stretch" h="full">
-                <Skeleton height="180px" borderTopRadius="2xl" />
-                <VStack spacing={4} p={6} align="stretch">
-                  <VStack spacing={2} align="stretch">
-                    <Skeleton height="20px" width="70%" />
-                    <Skeleton height="16px" width="50%" />
-                  </VStack>
-                </VStack>
-              </VStack>
-            </CardBody>
-          </Card>
-        ))}
-      </SimpleGrid>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert status="error" borderRadius="xl">
-        <AlertIcon />
-        {error}
-      </Alert>
-    );
-  }
-
-  return (
-    <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={8}>
-      {projects.slice(0, 2).map((project) => (
-        <Card
-          key={project.id}
-          bg={bgColor}
-          border="1px solid"
-          borderColor={borderColor}
-          borderRadius="2xl"
-          overflow="hidden"
-          h="full"
-        >
-          <CardBody p={0}>
-            <VStack spacing={0} align="stretch" h="full">
-              <Box position="relative" overflow="hidden">
-                <ProjectImage
-                  imageUrl={project.imgUrl}
-                  alt={project.projectName}
-                  size="small"
-                />
-                <Box
-                  position="absolute"
-                  top={3}
-                  right={3}
-                  bg="rgba(255,255,255,0.9)"
-                  backdropFilter="blur(10px)"
-                  borderRadius="full"
-                  p={2}
-                >
-                  <Icon as={FaCode} color="purple.500" boxSize={4} />
-                </Box>
-              </Box>
-
-              <VStack spacing={3} p={6} align="stretch" flex={1}>
-                <Heading
-                  as="h4"
-                  size="md"
-                  color={textColor}
-                  fontWeight="bold"
-                  noOfLines={1}
-                  title={project.projectName}
-                >
-                  {project.projectName}
-                </Heading>
-                <Text fontSize="sm" color="purple.500" fontWeight="semibold">
-                  {project.projectDate || project.date}
-                </Text>
-              </VStack>
-            </VStack>
-          </CardBody>
-        </Card>
-      ))}
-    </SimpleGrid>
-  );
-};
-
 export default ProjectTiles;
-export { SmallTiles };

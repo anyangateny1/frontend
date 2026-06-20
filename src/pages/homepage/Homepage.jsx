@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Badge,
   Box,
   Button,
@@ -16,18 +15,11 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import { keyframes } from "@emotion/react";
-import React from "react";
 import {
   FaAws,
   FaBug,
-  FaCloud,
-  FaCode,
   FaExternalLinkAlt,
   FaGitAlt,
-  FaJava,
-  FaLightbulb,
-  FaNodeJs,
   FaPalette,
   FaProjectDiagram,
   FaPython,
@@ -35,21 +27,18 @@ import {
   FaRocket,
   FaStar,
   FaTools,
-  FaWrench,
 } from "react-icons/fa";
 import {
   SiCmake,
   SiCplusplus,
   SiDocker,
-  SiJavascript,
-  SiRust,
-  SiSpringboot,
   SiTypescript,
   SiVuedotjs,
 } from "react-icons/si";
 import { Link } from "react-router-dom";
-import ProjectTiles from "../components/ProjectTiles";
-import useResume from "../utils/useResume";
+import FloatingBackground from "../../components/FloatingBackground";
+import ProjectTiles from "../../components/ProjectTiles";
+import useResume from "../../hooks/useResume";
 
 const skillCategories = [
   {
@@ -74,7 +63,7 @@ const skillCategories = [
   },
   {
     title: "Cloud",
-    icon: FaCloud,
+    icon: FaRocket,
     gradient: "linear(to-br, orange.400, red.500)",
     skills: [
       { name: "AWS", icon: FaAws, color: "orange.400" },
@@ -93,210 +82,10 @@ const skillCategories = [
   },
 ];
 
-const float = keyframes`
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(5deg); }
-`;
-
-function FloatingElements() {
-  const elements = [
-    // Hero section (0-90vh)
-    { icon: FaReact, color: "blue.400", size: "38px", top: "5vh", left: "12%" },
-    {
-      icon: SiCplusplus,
-      color: "blue.600",
-      size: "34px",
-      top: "15vh",
-      right: "15%",
-    },
-    {
-      icon: SiVuedotjs,
-      color: "green.400",
-      size: "28px",
-      top: "8vh",
-      left: "50%",
-    },
-    {
-      icon: FaGitAlt,
-      color: "orange.500",
-      size: "26px",
-      top: "25vh",
-      left: "75%",
-    },
-    { icon: FaJava, color: "red.500", size: "32px", top: "40vh", left: "8%" },
-    {
-      icon: SiTypescript,
-      color: "blue.500",
-      size: "30px",
-      top: "35vh",
-      right: "10%",
-    },
-    {
-      icon: FaPython,
-      color: "yellow.500",
-      size: "34px",
-      top: "70vh",
-      left: "15%",
-    },
-    {
-      icon: FaAws,
-      color: "orange.400",
-      size: "38px",
-      top: "65vh",
-      right: "12%",
-    },
-
-    // Skills section (90-180vh)
-    {
-      icon: SiDocker,
-      color: "blue.400",
-      size: "32px",
-      top: "95vh",
-      left: "80%",
-    },
-    {
-      icon: SiSpringboot,
-      color: "green.500",
-      size: "30px",
-      top: "105vh",
-      left: "10%",
-    },
-    {
-      icon: FaReact,
-      color: "cyan.400",
-      size: "28px",
-      top: "115vh",
-      right: "18%",
-    },
-    {
-      icon: SiCplusplus,
-      color: "blue.500",
-      size: "26px",
-      top: "125vh",
-      left: "55%",
-    },
-    {
-      icon: FaCloud,
-      color: "blue.300",
-      size: "34px",
-      top: "140vh",
-      left: "8%",
-    },
-    {
-      icon: FaPython,
-      color: "blue.500",
-      size: "30px",
-      top: "135vh",
-      right: "10%",
-    },
-    {
-      icon: SiTypescript,
-      color: "blue.600",
-      size: "28px",
-      top: "150vh",
-      left: "70%",
-    },
-    {
-      icon: SiRust,
-      color: "orange.700",
-      size: "30px",
-      top: "160vh",
-      left: "25%",
-    },
-
-    // Projects section (180-280vh)
-    {
-      icon: FaAws,
-      color: "orange.500",
-      size: "32px",
-      top: "185vh",
-      right: "15%",
-    },
-    { icon: FaJava, color: "red.500", size: "34px", top: "195vh", left: "12%" },
-    {
-      icon: SiVuedotjs,
-      color: "green.400",
-      size: "30px",
-      top: "210vh",
-      right: "8%",
-    },
-    {
-      icon: SiDocker,
-      color: "blue.500",
-      size: "28px",
-      top: "220vh",
-      left: "65%",
-    },
-    {
-      icon: FaGitAlt,
-      color: "orange.600",
-      size: "32px",
-      top: "235vh",
-      left: "18%",
-    },
-    {
-      icon: SiSpringboot,
-      color: "green.600",
-      size: "26px",
-      top: "245vh",
-      right: "22%",
-    },
-    {
-      icon: FaReact,
-      color: "blue.400",
-      size: "34px",
-      top: "260vh",
-      left: "75%",
-    },
-    {
-      icon: SiCplusplus,
-      color: "blue.600",
-      size: "30px",
-      top: "270vh",
-      left: "10%",
-    },
-  ];
-
-  return (
-    <Box
-      position="absolute"
-      top={0}
-      left={0}
-      right={0}
-      height="280vh"
-      overflow="visible"
-      zIndex={0}
-      pointerEvents="none"
-    >
-      {elements.map((element, index) => (
-        <Box
-          key={index}
-          position="absolute"
-          top={element.top}
-          left={element.left}
-          right={element.right}
-          animation={`${float} ${4 + index * 0.3}s ease-in-out infinite`}
-          opacity={0.2}
-        >
-          <Icon
-            as={element.icon}
-            color={element.color}
-            boxSize={element.size}
-          />
-        </Box>
-      ))}
-    </Box>
-  );
-}
-
 function HeroSection() {
   const { resumeUrl, loading: resumeLoading } = useResume();
   const textColor = useColorModeValue("gray.800", "white");
   const subtitleColor = useColorModeValue("gray.600", "gray.300");
-  const gradientBg = useColorModeValue(
-    "linear(to-r, blue.800, purple.900)",
-    "linear(to-r, blue.800, purple.400)",
-  );
 
   return (
     <Box
@@ -417,7 +206,7 @@ function SkillsSection() {
               fontWeight="extrabold"
               letterSpacing="tight"
             >
-              Skills & Technologies
+              Skills &amp; Technologies
             </Heading>
             <Text
               color={useColorModeValue("gray.600", "gray.300")}
@@ -573,7 +362,7 @@ function ProjectsSection() {
 function Homepage() {
   return (
     <Box position="relative" overflow="hidden">
-      <FloatingElements />
+      <FloatingBackground variant="homepage" />
       <Box position="relative" zIndex={1}>
         <HeroSection />
         <SkillsSection />
