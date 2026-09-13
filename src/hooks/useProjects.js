@@ -71,18 +71,25 @@ const loadProjects = async () => {
   return resolved;
 };
 
+// --------------------------------------------------------------------------
+// Hook
+// --------------------------------------------------------------------------
 const useProjects = () => {
+  // Initialise from cache synchronously — components that mount after the
+  // first fetch already have data on their first render (no loading flash).
   const [projects, setProjects] = useState(projectsCache ?? []);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(projectsCache === null);
 
   useEffect(() => {
+    // Cache hit — nothing to do
     if (projectsCache !== null) {
       setProjects(projectsCache);
       setLoading(false);
       return;
     }
 
+    // Start a fetch (or reuse the one already in flight)
     if (!fetchingPromise) {
       fetchingPromise = loadProjects()
         .then((data) => {
@@ -113,11 +120,13 @@ const useProjects = () => {
         );
         setLoading(false);
 
+        // Best-effort: show stale localStorage data rather than a blank screen
         const stale = localStorage.getItem("projects");
         if (stale) {
           try {
             setProjects(JSON.parse(stale));
           } catch {
+            /* ignore parse errors */
           }
         }
       });
