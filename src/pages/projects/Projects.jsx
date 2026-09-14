@@ -1,15 +1,11 @@
 import {
-  Badge,
   Box,
   Container,
   Heading,
-  Icon,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import { FaCode } from "react-icons/fa";
-import FloatingBackground from "../../components/FloatingBackground";
 import ProjectTiles from "../../components/ProjectTiles";
 
 function Projects() {
@@ -23,7 +19,6 @@ function Projects() {
       position="relative"
       overflow="hidden"
     >
-      <FloatingBackground variant="projects" />
       <Container
         maxW="container.xl"
         pt={8}
@@ -32,27 +27,13 @@ function Projects() {
         zIndex={1}
       >
         {/* Header */}
-        <VStack spacing={4} textAlign="center" mb={10}>
-          <Badge
-            colorScheme="purple"
-            variant="subtle"
-            px={6}
-            py={2}
-            borderRadius="full"
-            fontSize="sm"
-            fontWeight="bold"
-            textTransform="uppercase"
-            letterSpacing="wide"
-          >
-            <Icon as={FaCode} mr={2} />
-            Portfolio
-          </Badge>
-          <Heading as="h1" size="2xl" color={textColor} fontWeight="extrabold">
+        <VStack spacing={2} textAlign="center" mb={8}>
+          <Heading as="h1" size="xl" color={textColor} fontWeight="extrabold">
             My Projects
           </Heading>
           <Text color={subtitleColor} fontSize="lg" maxW="2xl">
-            A collection of projects showcasing my skills and passion for
-            development
+            A collection of projects showing some of the stuff I've been able to
+            do.
           </Text>
         </VStack>
 

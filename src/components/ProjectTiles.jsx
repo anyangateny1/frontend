@@ -7,7 +7,6 @@ import {
   CardBody,
   Heading,
   HStack,
-  Icon,
   SimpleGrid,
   Skeleton,
   SkeletonText,
@@ -15,8 +14,7 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FaCode } from "react-icons/fa";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useProjects from "../hooks/useProjects";
 import ProjectImage from "./ProjectImage";
 
@@ -46,7 +44,7 @@ const TagMarquee = ({ tags }) => {
     }
 
     return () => resizeObserver.disconnect();
-  }, [checkOverflow, tags]);
+  }, [checkOverflow]);
 
   const renderBadges = () =>
     tags.map((tag, tagIndex) =>
@@ -179,7 +177,7 @@ const ProjectTiles = ({ limit }) => {
 
   return (
     <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-      {displayProjects.map((project, index) => (
+      {displayProjects.map((project, _index) => (
         <Card
           key={project.id}
           bg={bgColor}
@@ -213,17 +211,6 @@ const ProjectTiles = ({ limit }) => {
                   alt={project.projectName}
                   size="medium"
                 />
-                <Box
-                  position="absolute"
-                  top={3}
-                  right={3}
-                  bg="blue.500"
-                  borderRadius="md"
-                  p={1.5}
-                  boxShadow="sm"
-                >
-                  <Icon as={FaCode} color="white" boxSize={3} />
-                </Box>
               </Box>
 
               <VStack spacing={5} p={6} align="stretch" flex={1}>
