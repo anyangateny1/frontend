@@ -9,10 +9,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import useResume from "../../hooks/useResume";
+import { Link } from "react-router-dom";
+import config from "../../config";
 
 function HeroSection() {
-  const { resumeUrl, loading: resumeLoading } = useResume();
   const textColor = useColorModeValue("gray.800", "white");
   const subtitleColor = useColorModeValue("gray.600", "gray.300");
   const projectsHoverBg = useColorModeValue("blue.50", "blue.900");
@@ -58,7 +58,7 @@ function HeroSection() {
             <HStack spacing={6} flexWrap="wrap" justify="center">
               <Button
                 as="a"
-                href={resumeUrl || "#"}
+                href={config.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 leftIcon={<FaExternalLinkAlt />}
@@ -73,15 +73,13 @@ function HeroSection() {
                 py={6}
                 fontSize="md"
                 fontWeight="semibold"
-                isLoading={resumeLoading}
-                isDisabled={!resumeUrl && !resumeLoading}
               >
                 View Resume
               </Button>
 
               <Button
-                as="a"
-                href="/projects"
+                as={Link}
+                to="/projects"
                 variant="outline"
                 colorScheme="blue"
                 size="lg"

@@ -1,152 +1,83 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Image as ChakraImage, Skeleton } from '@chakra-ui/react';
+import { Box, Image as ChakraImage, Icon, Skeleton } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { FiImage } from "react-icons/fi";
 
-const PLACEHOLDER_IMAGE = '/placeholder.jpg';
-const CACHE_KEY_PREFIX = 'project_image_';
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+const SIZE_CONFIG = {
+  small: { paddingBottom: "40%", maxHeight: "200px" },
+  medium: { paddingBottom: "56.25%", maxHeight: "300px" },
+  large: { paddingBottom: "56.25%", maxHeight: "400px" },
+};
 
-const ProjectImage = React.memo(({ imageUrl, size = 'medium', alt }) => {
-  const [displayUrl, setDisplayUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+const ProjectImage = React.memo(({ imageUrl, size = "medium", alt = "" }) => {
+  const { paddingBottom, maxHeight } = SIZE_CONFIG[size] ?? SIZE_CONFIG.medium;
 
-  const getDimensions = useCallback(() => {
-    switch (size) {
-      case 'small':
-        return { paddingBottom: '40%', maxHeight: '200px' };
-      case 'large':
-        return { paddingBottom: '56.25%', maxHeight: '400px' };
-      default: // medium
-        return { paddingBottom: '56.25%', maxHeight: '300px' };
-    }
-  }, [size]);
-
-  const loadAndCacheImage = useCallback(async () => {
-    if (hasError) return;
-
-    // If the imageUrl is already a presigned URL, use it directly
-    if (imageUrl && (imageUrl.startsWith('https://') || imageUrl.startsWith('http://'))) {
-      // Pre-load the image to check if it's valid
-      return new Promise((resolve, reject) => {
-        const img = new window.Image();
-        img.onload = () => {
-          setDisplayUrl(imageUrl);
-          setIsLoading(false);
-          resolve();
-        };
-        img.onerror = () => {
-          console.error('Image load failed for URL:', imageUrl);
-          setHasError(true);
-          setDisplayUrl(PLACEHOLDER_IMAGE);
-          setIsLoading(false);
-          reject(new Error('Image load failed'));
-        };
-        img.src = imageUrl;
-      });
-    }
-
-    // For API endpoints that return presigned URLs
-    const cacheKey = `${CACHE_KEY_PREFIX}${imageUrl}`;
-    const cachedData = localStorage.getItem(cacheKey);
-    
-    if (cachedData) {
-      try {
-        const { url, timestamp } = JSON.parse(cachedData);
-        if (Date.now() - timestamp < CACHE_DURATION) {
-          setDisplayUrl(url);
-          setIsLoading(false);
-          return;
-        }
-      } catch (e) {
-        console.warn('Cache parsing error:', e);
-      }
-    }
-
-    try {
-      const response = await fetch(imageUrl);
-      if (!response.ok) throw new Error('Failed to fetch image URL');
-      
-      const data = await response.json();
-      if (!data.url) throw new Error('Invalid image URL response');
-
-      // Pre-load the image
-      return new Promise((resolve, reject) => {
-        const img = new window.Image();
-        img.onload = () => {
-          localStorage.setItem(cacheKey, JSON.stringify({
-            url: data.url,
-            timestamp: Date.now()
-          }));
-          setDisplayUrl(data.url);
-          setIsLoading(false);
-          resolve();
-        };
-        img.onerror = () => {
-          setHasError(true);
-          setDisplayUrl(PLACEHOLDER_IMAGE);
-          setIsLoading(false);
-          reject(new Error('Image load failed'));
-        };
-        img.src = data.url;
-      });
-    } catch (error) {
-      console.error('Error loading image:', error);
-      setHasError(true);
-      setDisplayUrl(PLACEHOLDER_IMAGE);
-      setIsLoading(false);
-    }
-  }, [imageUrl, hasError]);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-    
-    const loadImage = async () => {
-      if (!isMounted) return;
-      setIsLoading(true);
-      await loadAndCacheImage();
-    };
+    setFailed(false);
+  }, []);
 
-    loadImage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [loadAndCacheImage]);
-
-  const dimensions = getDimensions();
+  const showBroken = !imageUrl || failed;
 
   return (
     <Box
       position="relative"
       width="100%"
-      paddingBottom={dimensions.paddingBottom}
+      paddingBottom={paddingBottom}
       overflow="hidden"
     >
-      {isLoading ? (
-        <Skeleton
+      {showBroken ? (
+        <Box
           position="absolute"
           top="0"
           left="0"
           width="100%"
           height="100%"
-        />
+          maxH={maxHeight}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          bg="gray.100"
+        >
+          <Icon
+            as={FiImage}
+            boxSize={6}
+            color="gray.400"
+            aria-label={alt || "Image unavailable"}
+          />
+        </Box>
       ) : (
         <ChakraImage
-          src={displayUrl}
+          key={imageUrl}
+          src={imageUrl}
           alt={alt}
+          onError={() => {
+            console.error("Image load failed for URL:", imageUrl);
+            setFailed(true);
+          }}
+          fallback={
+            <Skeleton
+              position="absolute"
+              top="0"
+              left="0"
+              width="100%"
+              height="100%"
+            />
+          }
           position="absolute"
           top="0"
           left="0"
           width="100%"
           height="100%"
           objectFit="cover"
-          maxH={dimensions.maxHeight}
+          maxH={maxHeight}
         />
       )}
     </Box>
   );
 });
 
-ProjectImage.displayName = 'ProjectImage';
+ProjectImage.displayName = "ProjectImage";
 
-export default ProjectImage; 
+export default ProjectImage;
+

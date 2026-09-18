@@ -71,9 +71,6 @@ const loadProjects = async () => {
   return resolved;
 };
 
-// --------------------------------------------------------------------------
-// Hook
-// --------------------------------------------------------------------------
 const useProjects = () => {
   // Initialise from cache synchronously — components that mount after the
   // first fetch already have data on their first render (no loading flash).
@@ -134,7 +131,7 @@ const useProjects = () => {
     return () => {
       mounted = false;
     };
-  }, []); // empty deps — intentional, fetch is managed by the module-level cache
+  }, []);
 
   return { projects, error, loading };
 };

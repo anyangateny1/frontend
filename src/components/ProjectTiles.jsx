@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Alert,
   AlertIcon,
@@ -7,9 +8,9 @@ import {
   CardBody,
   Heading,
   HStack,
+  Link,
   SimpleGrid,
-  Skeleton,
-  SkeletonText,
+  Spinner,
   Text,
   useColorModeValue,
   VStack,
@@ -18,39 +19,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useProjects from "../hooks/useProjects";
 import ProjectImage from "./ProjectImage";
 
-// Marquee component for tags that overflow
-const TagMarquee = ({ tags }) => {
-  const containerRef = useRef(null);
-  const contentRef = useRef(null);
-  const [shouldAnimate, setShouldAnimate] = useState(false);
-  const [contentWidth, setContentWidth] = useState(0);
+const MARQUEE_MIN_DURATION_S = 8;
+const MARQUEE_PX_PER_SECOND = 15;
 
-  const checkOverflow = useCallback(() => {
-    if (containerRef.current && contentRef.current) {
-      const containerWidth = containerRef.current.offsetWidth;
-      const scrollWidth = contentRef.current.scrollWidth;
-      const needsMarquee = scrollWidth > containerWidth || tags.length > 2;
-      setShouldAnimate(needsMarquee);
-      setContentWidth(scrollWidth);
-    }
-  }, [tags.length]);
-
-  useEffect(() => {
-    checkOverflow();
-
-    const resizeObserver = new ResizeObserver(checkOverflow);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-
-    return () => resizeObserver.disconnect();
-  }, [checkOverflow]);
-
-  const renderBadges = () =>
-    tags.map((tag, tagIndex) =>
+const TagBadges = ({ tags, innerRef }) => (
+  <HStack ref={innerRef} spacing={2} flexWrap="nowrap" display="inline-flex">
+    {tags.map((tag, i) =>
       tag ? (
         <Badge
-          key={tagIndex}
+          key={i}
           colorScheme="blue"
           variant="subtle"
           fontSize="xs"
@@ -66,20 +43,58 @@ const TagMarquee = ({ tags }) => {
           {tag}
         </Badge>
       ) : null,
-    );
+    )}
+  </HStack>
+);
 
-  if (!shouldAnimate) {
+const TagMarquee = ({ tags }) => {
+  const containerRef = useRef(null);
+  const measureRef = useRef(null);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [contentWidth, setContentWidth] = useState(0);
+
+  const checkOverflow = useCallback(() => {
+    if (!containerRef.current || !measureRef.current) return;
+    const containerWidth = containerRef.current.offsetWidth;
+    const scrollWidth = measureRef.current.scrollWidth;
+    setShouldAnimate(scrollWidth > containerWidth);
+    setContentWidth(scrollWidth);
+  }, []);
+
+  const _tagsKey = tags.join("|");
+  useEffect(() => {
+    checkOverflow();
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    if (containerRef.current) resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, [checkOverflow]);
+
+  const animate = shouldAnimate;
+
+  const measuringNode = (
+    <Box position="absolute" visibility="hidden" pointerEvents="none">
+      <TagBadges tags={tags} innerRef={measureRef} />
+    </Box>
+  );
+
+  if (!animate) {
     return (
-      <Box ref={containerRef} overflow="hidden" width="100%">
-        <HStack ref={contentRef} spacing={2} flexWrap="nowrap">
-          {renderBadges()}
-        </HStack>
+      <Box
+        ref={containerRef}
+        overflow="hidden"
+        width="100%"
+        position="relative"
+      >
+        <TagBadges tags={tags} />
+        {measuringNode}
       </Box>
     );
   }
 
-  // Animation duration scales with content width for consistent speed
-  const duration = Math.max(8, contentWidth / 30);
+  const duration = Math.max(
+    MARQUEE_MIN_DURATION_S,
+    contentWidth / MARQUEE_PX_PER_SECOND,
+  );
 
   return (
     <Box
@@ -87,7 +102,6 @@ const TagMarquee = ({ tags }) => {
       overflow="hidden"
       width="100%"
       position="relative"
-      className="tag-marquee-container"
       sx={{
         maskImage:
           "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
@@ -96,73 +110,178 @@ const TagMarquee = ({ tags }) => {
       }}
     >
       <HStack
-        ref={contentRef}
         spacing={2}
         flexWrap="nowrap"
-        className="tag-marquee"
+        display="inline-flex"
         sx={{
-          display: "inline-flex",
           animation: `marquee ${duration}s linear infinite`,
-          "&:hover": {
-            animationPlayState: "paused",
-          },
+          "&:hover": { animationPlayState: "paused" },
           "@keyframes marquee": {
             "0%": { transform: "translateX(0)" },
-            "100%": { transform: `translateX(-50%)` },
+            "100%": { transform: "translateX(-50%)" },
           },
         }}
       >
-        {/* Duplicate content for seamless loop */}
-        {renderBadges()}
-        {renderBadges()}
+        <TagBadges tags={tags} />
+        <TagBadges tags={tags} />
       </HStack>
+      {measuringNode}
     </Box>
+  );
+};
+
+const getProjectDate = (project) => project.date;
+const getProjectDescription = (project) => project.description;
+const getProjectGithub = (project) =>
+  project.githubUrl || project.github || project.url;
+
+const CardShell = ({ bgColor, borderColor, accent, hoverable, children }) => (
+  <Card
+    bg={bgColor}
+    border="1px solid"
+    borderColor={borderColor}
+    borderRadius="2xl"
+    overflow="hidden"
+    h="full"
+    boxShadow="sm"
+    position="relative"
+    transition={hoverable ? "all 0.2s ease" : undefined}
+    _hover={
+      hoverable ? { transform: "translateY(-4px)", boxShadow: "lg" } : undefined
+    }
+  >
+    {accent}
+    <CardBody p={0}>{children}</CardBody>
+  </Card>
+);
+
+const GradientAccentBar = () => (
+  <Box
+    position="absolute"
+    top={0}
+    left={0}
+    right={0}
+    h="3px"
+    bgGradient="linear(to-r, blue.400, blue.600)"
+  />
+);
+
+const ProjectCard = ({ project, theme }) => {
+  const { bgColor, borderColor, textColor, subtitleColor } = theme;
+  const githubUrl = getProjectGithub(project);
+
+  const cardContent = (
+    <CardShell
+      bgColor={bgColor}
+      borderColor={borderColor}
+      accent={<GradientAccentBar />}
+      hoverable={!!githubUrl}
+    >
+      {githubUrl && (
+        <Box
+          position="absolute"
+          top={3}
+          left={3}
+          zIndex={2}
+          p="6px"
+          borderRadius="full"
+          bg="blackAlpha.400"
+          backdropFilter="blur(6px)"
+          color="white"
+          opacity={0.4}
+          transition="all 0.2s ease-in-out"
+          _groupHover={{
+            opacity: 1,
+            transform: "translate(2px, -2px)",
+            bg: "blue.500",
+            boxShadow: "md",
+          }}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <ExternalLinkIcon boxSize="13px" />
+        </Box>
+      )}
+
+      <VStack spacing={0} align="stretch" h="full">
+        <ProjectImage
+          imageUrl={project.imgUrl}
+          alt={project.name}
+          size="medium"
+        />
+
+        <VStack spacing={5} p={6} align="stretch" flex={1}>
+          <VStack spacing={2} align="stretch">
+            <Heading
+              as="h3"
+              size="md"
+              color={textColor}
+              fontWeight="bold"
+              noOfLines={1}
+              title={project.name}
+            >
+              {project.name}
+            </Heading>
+            <Text fontSize="sm" color="blue.500" fontWeight="medium">
+              {getProjectDate(project)}
+            </Text>
+          </VStack>
+
+          <Text
+            color={subtitleColor}
+            fontSize="sm"
+            lineHeight="tall"
+            noOfLines={3}
+            flex={1}
+          >
+            {getProjectDescription(project)}
+          </Text>
+
+          {project.tags?.length > 0 && (
+            <Box pt={2}>
+              <TagMarquee tags={project.tags} />
+            </Box>
+          )}
+        </VStack>
+      </VStack>
+    </CardShell>
+  );
+
+  if (!githubUrl) {
+    return cardContent;
+  }
+
+  return (
+    <Link
+      href={githubUrl}
+      isExternal
+      _hover={{ textDecoration: "none" }}
+      h="full"
+      display="block"
+      role="group"
+    >
+      {cardContent}
+    </Link>
   );
 };
 
 const ProjectTiles = ({ limit }) => {
   const { projects, error, loading } = useProjects();
   const displayProjects = limit ? projects.slice(0, limit) : projects;
-  const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
-  const textColor = useColorModeValue("gray.800", "white");
-  const subtitleColor = useColorModeValue("gray.600", "gray.400");
+
+  const theme = {
+    bgColor: useColorModeValue("white", "gray.800"),
+    borderColor: useColorModeValue("gray.200", "gray.700"),
+    textColor: useColorModeValue("gray.800", "white"),
+    subtitleColor: useColorModeValue("gray.600", "gray.400"),
+  };
 
   if (loading) {
     return (
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-        {[1, 2, 3].map((index) => (
-          <Card
-            key={index}
-            bg={bgColor}
-            border="1px solid"
-            borderColor={borderColor}
-            borderRadius="2xl"
-            h="full"
-            boxShadow="sm"
-            overflow="hidden"
-          >
-            <Box h="3px" bg="blue.200" />
-            <CardBody p={0}>
-              <VStack spacing={0} align="stretch" h="full">
-                <Skeleton height="200px" />
-                <VStack spacing={5} p={6} align="stretch" flex={1}>
-                  <VStack spacing={2} align="stretch">
-                    <Skeleton height="20px" width="70%" />
-                    <Skeleton height="16px" width="40%" />
-                  </VStack>
-                  <SkeletonText noOfLines={3} spacing={2} flex={1} />
-                  <HStack spacing={2} pt={2}>
-                    <Skeleton height="24px" width="60px" borderRadius="full" />
-                    <Skeleton height="24px" width="80px" borderRadius="full" />
-                    <Skeleton height="24px" width="70px" borderRadius="full" />
-                  </HStack>
-                </VStack>
-              </VStack>
-            </CardBody>
-          </Card>
-        ))}
-      </SimpleGrid>
+      <Box display="flex" justifyContent="center" py={12}>
+        <Spinner size="lg" color="blue.500" />
+      </Box>
     );
   }
 
@@ -177,78 +296,8 @@ const ProjectTiles = ({ limit }) => {
 
   return (
     <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-      {displayProjects.map((project, _index) => (
-        <Card
-          key={project.id}
-          bg={bgColor}
-          border="1px solid"
-          borderColor={borderColor}
-          borderRadius="2xl"
-          overflow="hidden"
-          h="full"
-          boxShadow="sm"
-          transition="all 0.2s ease"
-          _hover={{
-            transform: "translateY(-4px)",
-            boxShadow: "lg",
-          }}
-          position="relative"
-        >
-          {/* Gradient accent bar */}
-          <Box
-            position="absolute"
-            top={0}
-            left={0}
-            right={0}
-            h="3px"
-            bgGradient="linear(to-r, blue.400, blue.600)"
-          />
-          <CardBody p={0}>
-            <VStack spacing={0} align="stretch" h="full">
-              <Box position="relative" overflow="hidden">
-                <ProjectImage
-                  imageUrl={project.imgUrl}
-                  alt={project.projectName}
-                  size="medium"
-                />
-              </Box>
-
-              <VStack spacing={5} p={6} align="stretch" flex={1}>
-                <VStack spacing={2} align="stretch">
-                  <Heading
-                    as="h3"
-                    size="md"
-                    color={textColor}
-                    fontWeight="bold"
-                    noOfLines={1}
-                    title={project.projectName}
-                  >
-                    {project.projectName}
-                  </Heading>
-                  <Text fontSize="sm" color="blue.500" fontWeight="medium">
-                    {project.projectDate || project.date}
-                  </Text>
-                </VStack>
-
-                <Text
-                  color={subtitleColor}
-                  fontSize="sm"
-                  lineHeight="tall"
-                  noOfLines={3}
-                  flex={1}
-                >
-                  {project.desc || project.description}
-                </Text>
-
-                {project.tags && project.tags.length > 0 && (
-                  <Box pt={2}>
-                    <TagMarquee tags={project.tags} />
-                  </Box>
-                )}
-              </VStack>
-            </VStack>
-          </CardBody>
-        </Card>
+      {displayProjects.map((project) => (
+        <ProjectCard key={project.id} project={project} theme={theme} />
       ))}
     </SimpleGrid>
   );
