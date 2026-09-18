@@ -35,7 +35,7 @@ const fetchWithRetry = async (url, options = {}, retries = 0) => {
 };
 
 const loadProjects = async () => {
-  const apiUrl = `${config.apiBaseUrl}/api/projects`;
+  const apiUrl = `${config.apiBaseUrl}${config.endpoints.projects}`;
   console.log("Fetching projects from:", apiUrl);
 
   const response = await fetchWithRetry(apiUrl);
@@ -140,4 +140,3 @@ const useProjects = () => {
 };
 
 export default useProjects;
-
