@@ -74,10 +74,10 @@ function Contact() {
     <Container maxW="container.sm" py={16}>
       <VStack spacing={2} align="start" mb={2}>
         <Heading as="h1" size="lg">
-          Say Hi
+          Contact
         </Heading>
         <Text color={mutedColor}>
-          Drop me a message below, or reach out on{" "}
+          Drop a message below, or reach out on{" "}
           <ChakraLink
             href="https://linkedin.com/in/anyangateny1"
             isExternal
