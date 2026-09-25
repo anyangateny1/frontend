@@ -21,11 +21,11 @@ function HeroSection() {
     <Box
       position="relative"
       overflow="hidden"
-      minH="90vh"
+      h={{ base: "calc(100dvh - 68px)", md: "calc(100dvh - 88px)" }}
       display="flex"
       alignItems="center"
     >
-      <Container maxW="container.xl" py={16} position="relative" zIndex={1}>
+      <Container maxW="container.xl" py={0} position="relative" zIndex={1}>
         <Box textAlign="center">
           <VStack spacing={6}>
             <Heading
